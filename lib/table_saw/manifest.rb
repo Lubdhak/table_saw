@@ -32,6 +32,11 @@ module TableSaw
       def has_many
         config.fetch('has_many', [])
       end
+
+      def mask_columns
+        @mask_columns ||= config.fetch('mask_columns',[])
+      end
+
     end
 
     def self.instance

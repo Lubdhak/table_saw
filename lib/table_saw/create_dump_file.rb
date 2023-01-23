@@ -8,7 +8,8 @@ module TableSaw
 
     FORMATS = {
       'copy' => TableSaw::Formats::Copy,
-      'insert' => TableSaw::Formats::Insert
+      'insert' => TableSaw::Formats::Insert,
+      'copy_with_mask' => TableSaw::Formats::CopyWithMask
     }.freeze
 
     def initialize(records, output:, format:)
@@ -48,13 +49,12 @@ module TableSaw
         COMMENT
 
         formatter = FORMATS.fetch(format.fetch('type', 'copy'), TableSaw::Formats::Copy).new(name, options: format)
-
         Array(formatter.header).each { |line| write_to_file(line) }
 
         TableSaw::Connection.with do |conn|
           conn.copy_data "COPY (#{table.copy_statement}) TO STDOUT", formatter.coder do
             while (row = conn.get_copy_data)
-              write_to_file formatter.dump_row(row)
+              write_to_file formatter.dump_row(row){ mask_columns(table, name) }
             end
           end
         end
@@ -73,6 +73,10 @@ module TableSaw
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
     private
+
+    def mask_columns(table, name)
+      table.manifest.tables[name].respond_to?('mask_columns') ? table.manifest.tables[name].mask_columns : []
+    end
 
     def alter_constraints_deferrability(keyword: 'DEFERRABLE')
       records.each_key do |name|
