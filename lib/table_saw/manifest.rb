@@ -34,7 +34,7 @@ module TableSaw
       end
 
       def mask_columns
-        @mask_columns ||= config.fetch('mask_columns',[])
+        @mask_columns ||= config.fetch('mask_columns',{})
       end
 
     end

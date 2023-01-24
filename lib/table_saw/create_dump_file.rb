@@ -75,7 +75,7 @@ module TableSaw
     private
 
     def mask_columns(table, name)
-      table.manifest.tables[name].respond_to?('mask_columns') ? table.manifest.tables[name].mask_columns : []
+      table.manifest.tables[name].respond_to?('mask_columns') ? table.manifest.tables[name].mask_columns : {}
     end
 
     def alter_constraints_deferrability(keyword: 'DEFERRABLE')
