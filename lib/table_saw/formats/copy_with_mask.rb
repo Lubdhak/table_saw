@@ -19,18 +19,20 @@ module TableSaw
         return row if mask_config.nil?
         columns = columns_to_mask(mask_config)
         return row if columns.select{|col| col != nil}.empty?
-        column_content = row.gsub("\n","").split(/\t/)
-        raise "String Parse Error" if column_content.count != columns.count
+        column_contents = row.split(/\t/)
+        if column_contents.count != columns.count
+          puts "row=#{row}"
+          raise "String Parse Error"
+        end
         columns.each_with_index do |sequence_hash,idx|
           next if sequence_hash.nil?
           sequence_hash.each do |rgx_find_key, replace_str_val|
             next if rgx_find_key.empty? || replace_str_val.empty?
             pattern = Regexp.new(rgx_find_key.to_str)
-            column_content[idx] = column_content[idx].gsub(/#{pattern}/,replace_str_val)
+            column_contents[idx] = column_contents[idx].gsub(/#{pattern}/,replace_str_val)
           end
         end
-
-        column_content.join("\t") + "\n"
+        column_contents.join("\t")
       end
 
       private
