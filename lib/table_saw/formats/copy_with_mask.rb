@@ -29,7 +29,7 @@ module TableSaw
           sequence_hash.each do |rgx_find_key, replace_str_val|
             next if rgx_find_key.empty? || replace_str_val.empty?
             pattern = Regexp.new(rgx_find_key.to_str)
-            column_contents[idx] = column_contents[idx].gsub(/#{pattern}/,replace_str_val)
+            column_contents[idx] = column_contents[idx].sub(/#{pattern}/,replace_str_val)
           end
         end
         column_contents.join("\t")
