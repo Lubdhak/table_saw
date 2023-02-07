@@ -4,7 +4,7 @@ require 'fileutils'
 
 module TableSaw
   class CreateDumpFile
-    attr_reader :records, :file, :format
+    attr_reader :records, :file, :format, :data_arr
 
     FORMATS = {
       'copy' => TableSaw::Formats::Copy,
@@ -16,6 +16,7 @@ module TableSaw
       @records = records
       @file = output
       @format = format
+      @data_arr = []
     end
 
     # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
@@ -69,6 +70,10 @@ module TableSaw
       restart_sequences
 
       alter_constraints_deferrability keyword: 'NOT DEFERRABLE'
+
+      File.open(file, 'ab') do |f|
+        @data_arr.each do |data| f.puts(data) end
+      end
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
 
@@ -125,7 +130,7 @@ module TableSaw
     end
 
     def write_to_file(data)
-      File.open(file, 'ab') { |f| f.puts(data) }
+      @data_arr << data
     end
   end
 end
