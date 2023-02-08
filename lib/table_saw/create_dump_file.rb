@@ -21,8 +21,10 @@ module TableSaw
 
     # rubocop:disable Metrics/MethodLength,Metrics/AbcSize
     def call
+      puts "CreateDumpFile.call"
       File.delete(file) if File.exist?(file)
       FileUtils.mkdir_p(File.dirname(file))
+      puts "created files call"
 
       alter_constraints_deferrability
 
@@ -40,6 +42,7 @@ module TableSaw
       SQL
 
       records.each do |name, table|
+        puts "starting for table #{table}"
         defer_constraints(name)
 
         write_to_file <<~COMMENT
@@ -55,6 +58,7 @@ module TableSaw
         TableSaw::Connection.with do |conn|
           conn.copy_data "COPY (#{table.copy_statement}) TO STDOUT", formatter.coder do
             while (row = conn.get_copy_data)
+              puts "trying to fetch data"
               write_to_file formatter.dump_row(row){ mask_columns(table, name) }
             end
             puts "starting GC"
@@ -73,7 +77,7 @@ module TableSaw
       restart_sequences
 
       alter_constraints_deferrability keyword: 'NOT DEFERRABLE'
-
+      puts "array size = #{@data_arr.count}"
       File.open(file, 'ab') do |f|
         puts "writing to file..."
         @data_arr.each do |data| f.write(data) end
