@@ -57,6 +57,9 @@ module TableSaw
             while (row = conn.get_copy_data)
               write_to_file formatter.dump_row(row){ mask_columns(table, name) }
             end
+            puts "starting GC"
+            GC.start
+            puts "#{table}"
           end
         end
 
@@ -72,7 +75,9 @@ module TableSaw
       alter_constraints_deferrability keyword: 'NOT DEFERRABLE'
 
       File.open(file, 'ab') do |f|
-        @data_arr.each do |data| f.puts(data) end
+        puts "writing to file..."
+        @data_arr.each do |data| f.write(data) end
+        f.close
       end
     end
     # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
