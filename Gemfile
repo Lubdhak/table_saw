@@ -6,6 +6,3 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'appraisal'
-gem 'debug'
-gem 'ruby-prof'
-gem 'memory_profiler'

@@ -8,8 +8,6 @@ require 'table_saw'
 require 'table_saw/create_dump_file'
 require 'table_saw/version'
 require 'thor'
-require 'ruby-prof'
-require 'memory_profiler'
 
 class CLI < Thor
   def self.exit_on_failure?

@@ -7,9 +7,6 @@ require 'table_saw/information_schema'
 require 'table_saw/manifest'
 require 'table_saw/queries'
 require 'table_saw/formats'
-require 'debug'
-require 'ruby-prof'
-require 'memory_profiler'
 
 module TableSaw
   def self.configuration
