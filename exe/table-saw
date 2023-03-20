@@ -8,6 +8,8 @@ require 'table_saw'
 require 'table_saw/create_dump_file'
 require 'table_saw/version'
 require 'thor'
+require 'ruby-prof'
+require 'memory_profiler'
 
 class CLI < Thor
   def self.exit_on_failure?
@@ -28,6 +30,7 @@ class CLI < Thor
   def dump
     TableSaw.configure(options.to_hash)
     records = TableSaw::DependencyGraph::Build.new(TableSaw::Manifest.instance).call
+    puts "Building DependencyGraph complete"
     TableSaw::CreateDumpFile.new(records, output: options[:output], format: options[:format]).call
   end
 
