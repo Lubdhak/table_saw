@@ -12,7 +12,7 @@ module TableSaw
         ['\.', "\n"]
       end
 
-      # complexity ~ Σ(masked_column_count × associated_sequences_count)
+      # complexity ~ Σ(masked_column_count × associated_regex_sequences_count)
       def dump_row(row)
         return row unless block_given?
         mask_config = yield

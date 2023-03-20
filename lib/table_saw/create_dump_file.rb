@@ -61,6 +61,7 @@ module TableSaw
               puts "trying to fetch data"
               write_to_file formatter.dump_row(row){ mask_columns(table, name) }
             end
+            actual_write_to_file
             puts "starting GC"
             GC.start
             puts "#{table}"
@@ -77,16 +78,21 @@ module TableSaw
       restart_sequences
 
       alter_constraints_deferrability keyword: 'NOT DEFERRABLE'
+      actual_write_to_file
+    end
+    # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
+
+    private
+
+    def actual_write_to_file
       puts "array size = #{@data_arr.count}"
       File.open(file, 'ab') do |f|
         puts "writing to file..."
         @data_arr.each do |data| f.write(data) end
         f.close
       end
+      @data_arr = []
     end
-    # rubocop:enable Metrics/MethodLength,Metrics/AbcSize
-
-    private
 
     def mask_columns(table, name)
       table.manifest.tables[name].respond_to?('mask_columns') ? table.manifest.tables[name].mask_columns : nil
